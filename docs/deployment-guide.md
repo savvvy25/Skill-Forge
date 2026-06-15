@@ -127,7 +127,7 @@ If you see the `psql` prompt, your database is ready.
    | **Root Directory** | `skillforge-backend` |
    | **Runtime** | `Docker` or `Java` |
    | **Build Command** | `./mvnw clean package -DskipTests` |
-   | **Start Command** | `java -jar target/skillforge-backend-0.0.1-SNAPSHOT.jar` |
+   | **Start Command** | *Auto-detected from Procfile* |
    | **Instance Type** | `Free` (or `Starter` for no cold starts) |
 
 ### 2.3 Set Environment Variables
@@ -216,7 +216,7 @@ In the Vercel project settings, navigate to **Settings** → **Environment Varia
 
 ### 3.5 Configure Rewrites for React Router
 
-Create or verify the following file exists at `skillforge-frontend/vercel.json`:
+Verify the following file exists at `skillforge-frontend/vercel.json`:
 
 ```json
 {
@@ -226,7 +226,7 @@ Create or verify the following file exists at `skillforge-frontend/vercel.json`:
 }
 ```
 
-This ensures React Router handles all routes correctly (prevents 404 on page refresh).
+This file is already included in the repository and ensures React Router handles all routes correctly (prevents 404 on page refresh).
 
 ### 3.6 Update CORS on Render
 
