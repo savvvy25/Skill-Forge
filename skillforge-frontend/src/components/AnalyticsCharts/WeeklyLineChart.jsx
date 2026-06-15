@@ -40,9 +40,9 @@ function WeeklyLineChart({ progressData = [] }) {
   const labels = generateWeekLabels(8);
 
   const totalSolved = progressData.reduce((acc, item) => {
-    return acc + (item.easy || item.easySolved || 0)
-      + (item.medium || item.mediumSolved || 0)
-      + (item.hard || item.hardSolved || 0);
+    return acc + (item.easyCount || 0)
+      + (item.mediumCount || 0)
+      + (item.hardCount || 0);
   }, 0);
 
   // Create a progression curve based on total

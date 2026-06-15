@@ -40,9 +40,9 @@ function ProgressTracker() {
 
   const [formData, setFormData] = useState({
     topic: '',
-    easy: 0,
-    medium: 0,
-    hard: 0,
+    easyCount: 0,
+    mediumCount: 0,
+    hardCount: 0,
   });
 
   // Topics already added (for filtering in Add mode)
@@ -51,7 +51,7 @@ function ProgressTracker() {
 
   const openAddModal = () => {
     setEditItem(null);
-    setFormData({ topic: '', easy: 0, medium: 0, hard: 0 });
+    setFormData({ topic: '', easyCount: 0, mediumCount: 0, hardCount: 0 });
     setShowModal(true);
   };
 
@@ -59,9 +59,9 @@ function ProgressTracker() {
     setEditItem(item);
     setFormData({
       topic: item.topic,
-      easy: item.easy || item.easySolved || 0,
-      medium: item.medium || item.mediumSolved || 0,
-      hard: item.hard || item.hardSolved || 0,
+      easyCount: item.easyCount || 0,
+      mediumCount: item.mediumCount || 0,
+      hardCount: item.hardCount || 0,
     });
     setShowModal(true);
   };
@@ -69,7 +69,7 @@ function ProgressTracker() {
   const closeModal = () => {
     setShowModal(false);
     setEditItem(null);
-    setFormData({ topic: '', easy: 0, medium: 0, hard: 0 });
+    setFormData({ topic: '', easyCount: 0, mediumCount: 0, hardCount: 0 });
   };
 
   const handleFormChange = (e) => {
@@ -92,17 +92,17 @@ function ProgressTracker() {
         const id = editItem._id || editItem.id;
         await updateProgress(id, {
           topic: formData.topic,
-          easy: formData.easy,
-          medium: formData.medium,
-          hard: formData.hard,
+          easyCount: formData.easyCount,
+          mediumCount: formData.mediumCount,
+          hardCount: formData.hardCount,
         });
         toast.success('Progress updated!', toastSuccess);
       } else {
         await addProgress({
           topic: formData.topic,
-          easy: formData.easy,
-          medium: formData.medium,
-          hard: formData.hard,
+          easyCount: formData.easyCount,
+          mediumCount: formData.mediumCount,
+          hardCount: formData.hardCount,
         });
         toast.success('Progress added!', toastSuccess);
       }
@@ -193,9 +193,9 @@ function ProgressTracker() {
               </thead>
               <tbody>
                 {progress.map((item, index) => {
-                  const easy = item.easy || item.easySolved || 0;
-                  const medium = item.medium || item.mediumSolved || 0;
-                  const hard = item.hard || item.hardSolved || 0;
+                  const easy = item.easyCount || 0;
+                  const medium = item.mediumCount || 0;
+                  const hard = item.hardCount || 0;
                   const total = easy + medium + hard;
 
                   return (
@@ -296,10 +296,10 @@ function ProgressTracker() {
                   </label>
                   <input
                     type="number"
-                    name="easy"
+                    name="easyCount"
                     className={styles.modalInput}
                     min="0"
-                    value={formData.easy}
+                    value={formData.easyCount}
                     onChange={handleFormChange}
                   />
                 </div>
@@ -315,10 +315,10 @@ function ProgressTracker() {
                   </label>
                   <input
                     type="number"
-                    name="medium"
+                    name="mediumCount"
                     className={styles.modalInput}
                     min="0"
-                    value={formData.medium}
+                    value={formData.mediumCount}
                     onChange={handleFormChange}
                   />
                 </div>
@@ -334,10 +334,10 @@ function ProgressTracker() {
                   </label>
                   <input
                     type="number"
-                    name="hard"
+                    name="hardCount"
                     className={styles.modalInput}
                     min="0"
-                    value={formData.hard}
+                    value={formData.hardCount}
                     onChange={handleFormChange}
                   />
                 </div>

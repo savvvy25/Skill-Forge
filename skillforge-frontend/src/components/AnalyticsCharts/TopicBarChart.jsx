@@ -65,9 +65,9 @@ function TopicBarChart({ data = [] }) {
   const chartData = data.map((item) => ({
     topic: item.topic?.length > 12 ? item.topic.substring(0, 12) + '…' : item.topic,
     fullTopic: item.topic,
-    Easy: item.easy || item.easySolved || 0,
-    Medium: item.medium || item.mediumSolved || 0,
-    Hard: item.hard || item.hardSolved || 0,
+    Easy: item.easyCount || 0,
+    Medium: item.mediumCount || 0,
+    Hard: item.hardCount || 0,
   }));
 
   if (chartData.length === 0) {

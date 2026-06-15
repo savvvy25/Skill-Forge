@@ -21,7 +21,8 @@ export function AuthProvider({ children }) {
 
       try {
         const response = await getProfile();
-        setUser(response.data.user || response.data);
+        const profileData = response.data?.data || response.data;
+        setUser(profileData);
         setToken(savedToken);
       } catch (err) {
         console.error('Token validation failed:', err);
@@ -40,9 +41,10 @@ export function AuthProvider({ children }) {
   // ── Login ──
   const login = useCallback(async (email, password) => {
     const response = await apiLogin({ email, password });
-    const data = response.data;
-    const newToken = data.token;
-    const userData = data.user;
+    // Backend returns ApiResponse<AuthResponse> = { success, message, data: { token, user } }
+    const apiData = response.data?.data || response.data;
+    const newToken = apiData.token;
+    const userData = apiData.user;
 
     localStorage.setItem('sf_token', newToken);
     if (userData) {
@@ -52,7 +54,7 @@ export function AuthProvider({ children }) {
     setToken(newToken);
     setUser(userData);
 
-    return data;
+    return apiData;
   }, []);
 
   // ── Register ──

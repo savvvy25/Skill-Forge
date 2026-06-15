@@ -81,7 +81,8 @@ public class ProgressService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Progress", "id", progressId));
 
-        progress.setTopic(request.getTopic());
+        // Topic is not changeable on update to avoid unique constraint violations.
+        // If user needs to change topic, they should delete and re-create.
         progress.setEasyCount(request.getEasyCount() != null ? request.getEasyCount() : 0);
         progress.setMediumCount(request.getMediumCount() != null ? request.getMediumCount() : 0);
         progress.setHardCount(request.getHardCount() != null ? request.getHardCount() : 0);

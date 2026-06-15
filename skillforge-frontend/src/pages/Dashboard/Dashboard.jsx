@@ -27,15 +27,15 @@ function Dashboard() {
 
   // Calculate stats from progress data
   const totalEasy = progress.reduce(
-    (acc, item) => acc + (item.easy || item.easySolved || 0),
+    (acc, item) => acc + (item.easyCount || 0),
     0
   );
   const totalMedium = progress.reduce(
-    (acc, item) => acc + (item.medium || item.mediumSolved || 0),
+    (acc, item) => acc + (item.mediumCount || 0),
     0
   );
   const totalHard = progress.reduce(
-    (acc, item) => acc + (item.hard || item.hardSolved || 0),
+    (acc, item) => acc + (item.hardCount || 0),
     0
   );
   const totalSolved = totalEasy + totalMedium + totalHard;

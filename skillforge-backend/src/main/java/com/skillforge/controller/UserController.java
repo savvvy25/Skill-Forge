@@ -4,6 +4,7 @@ import com.skillforge.dto.ApiResponse;
 import com.skillforge.dto.ProfileUpdateRequest;
 import com.skillforge.dto.UserDTO;
 import com.skillforge.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +40,7 @@ public class UserController {
      */
     @PutMapping("/profile")
     public ResponseEntity<ApiResponse<UserDTO>> updateProfile(Authentication authentication,
-                                                               @RequestBody ProfileUpdateRequest request) {
+                                                               @Valid @RequestBody ProfileUpdateRequest request) {
         Long userId = extractUserId(authentication);
         UserDTO updatedUser = userService.updateProfile(userId, request);
         return ResponseEntity.ok(ApiResponse.success("Profile updated successfully", updatedUser));

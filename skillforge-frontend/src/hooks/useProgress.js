@@ -11,7 +11,8 @@ export function useProgress() {
     setError(null);
     try {
       const response = await fetchProgressAPI();
-      const data = response.data.progress || response.data || [];
+      // Backend wraps in ApiResponse: { success, message, data: [...] }
+      const data = response.data?.data || response.data || [];
       setProgress(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch progress');

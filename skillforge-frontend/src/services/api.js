@@ -41,34 +41,34 @@ api.interceptors.response.use(
 // Auth API
 // ═══════════════════════════════════════════════════════════════
 
-export const registerUser = (data) => api.post('/auth/register', data);
+export const registerUser = (data) => api.post('/api/auth/register', data);
 
-export const loginUser = (data) => api.post('/auth/login', data);
+export const loginUser = (data) => api.post('/api/auth/login', data);
 
 // ═══════════════════════════════════════════════════════════════
 // Profile API
 // ═══════════════════════════════════════════════════════════════
 
-export const getProfile = () => api.get('/user/profile');
+export const getProfile = () => api.get('/api/user/profile');
 
-export const updateProfile = (data) => api.put('/user/profile', data);
+export const updateProfile = (data) => api.put('/api/user/profile', data);
 
 // ═══════════════════════════════════════════════════════════════
 // Progress API
 // ═══════════════════════════════════════════════════════════════
 
-export const getProgress = () => api.get('/progress');
+export const getProgress = () => api.get('/api/progress');
 
-export const addProgress = (data) => api.post('/progress', data);
+export const addProgress = (data) => api.post('/api/progress', data);
 
-export const updateProgress = (id, data) => api.put(`/progress/${id}`, data);
+export const updateProgress = (id, data) => api.put(`/api/progress/${id}`, data);
 
-export const deleteProgress = (id) => api.delete(`/progress/${id}`);
+export const deleteProgress = (id) => api.delete(`/api/progress/${id}`);
 
 // ═══════════════════════════════════════════════════════════════
 // Dashboard API
 // ═══════════════════════════════════════════════════════════════
 
-export const getDashboardSummary = () => api.get('/dashboard/summary');
+export const getDashboardSummary = () => api.get('/api/progress/summary');
 
 export default api;

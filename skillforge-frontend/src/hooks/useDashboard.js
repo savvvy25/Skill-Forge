@@ -11,7 +11,8 @@ export function useDashboard() {
     setError(null);
     try {
       const response = await getDashboardSummary();
-      setSummary(response.data.summary || response.data);
+      // Backend wraps in ApiResponse: { success, message, data: { ... } }
+      setSummary(response.data?.data || response.data);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch dashboard data');
       console.error('Dashboard fetch error:', err);

@@ -65,8 +65,10 @@ function Profile() {
           ? parseInt(formData.graduationYear, 10)
           : undefined,
       };
-      await updateProfile(payload);
-      updateUser(payload);
+      const response = await updateProfile(payload);
+      // Extract from ApiResponse wrapper: { success, message, data: UserDTO }
+      const updatedData = response.data?.data || response.data;
+      updateUser(updatedData);
       setEditing(false);
       toast.success('Profile updated successfully!', {
         style: { background: '#1a1f35', color: '#f1f5f9', border: '1px solid rgba(16,185,129,0.3)' },
