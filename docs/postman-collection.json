@@ -1,0 +1,690 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "SkillForge API",
+    "description": "Complete API collection for SkillForge — a full-stack placement-focused student dashboard.\n\n## Setup\n1. Set the `baseUrl` variable to your backend URL (default: `http://localhost:8080`)\n2. Run the **Login** request first — it auto-saves the JWT token to `authToken`\n3. All protected endpoints use `{{authToken}}` automatically\n\n## Authentication Flow\n1. Register a new account via `POST /api/auth/register`\n2. Login via `POST /api/auth/login` → token is saved to `authToken` variable\n3. All subsequent requests use the token via `Authorization: Bearer {{authToken}}`",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints — register new users and login to receive JWT tokens.",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Vishal Kumar\",\n  \"email\": \"vishal@example.com\",\n  \"password\": \"SecureP@ss123\"\n}"
+            },
+            "description": "Register a new user account. No authentication required.\n\n**Validations:**\n- `name`: Required, 2-100 characters\n- `email`: Required, valid email format, must be unique\n- `password`: Required, minimum 8 characters"
+          },
+          "response": [
+            {
+              "name": "201 - User Registered Successfully",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/register",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "auth", "register"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Vishal Kumar\",\n  \"email\": \"vishal@example.com\",\n  \"password\": \"SecureP@ss123\"\n}"
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"name\": \"Vishal Kumar\",\n  \"email\": \"vishal@example.com\",\n  \"message\": \"User registered successfully\"\n}"
+            },
+            {
+              "name": "409 - Email Already Exists",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/register",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "auth", "register"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Vishal Kumar\",\n  \"email\": \"vishal@example.com\",\n  \"password\": \"SecureP@ss123\"\n}"
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"Email already registered\",\n  \"status\": 409\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Auto-save JWT token to collection variable",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"authToken\", jsonData.token);",
+                  "    console.log(\"✅ Auth token saved to collection variable 'authToken'\");",
+                  "    ",
+                  "    // Validate response structure",
+                  "    pm.test(\"Response has token\", function () {",
+                  "        pm.expect(jsonData).to.have.property(\"token\");",
+                  "        pm.expect(jsonData.token).to.be.a(\"string\").and.not.empty;",
+                  "    });",
+                  "    ",
+                  "    pm.test(\"Response has user info\", function () {",
+                  "        pm.expect(jsonData).to.have.property(\"email\");",
+                  "        pm.expect(jsonData).to.have.property(\"name\");",
+                  "    });",
+                  "    ",
+                  "    pm.test(\"Token type is Bearer\", function () {",
+                  "        pm.expect(jsonData.type).to.equal(\"Bearer\");",
+                  "    });",
+                  "} else {",
+                  "    console.log(\"❌ Login failed with status: \" + pm.response.code);",
+                  "    pm.test(\"Login was successful\", function () {",
+                  "        pm.response.to.have.status(200);",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vishal@example.com\",\n  \"password\": \"SecureP@ss123\"\n}"
+            },
+            "description": "Authenticate with email and password to receive a JWT token.\n\n**Note:** The test script automatically saves the JWT token to the `authToken` collection variable. All subsequent protected requests will use this token."
+          },
+          "response": [
+            {
+              "name": "200 - Login Successful",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/login",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "auth", "login"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"vishal@example.com\",\n  \"password\": \"SecureP@ss123\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ2aXNoYWxAZXhhbXBsZS5jb20iLCJpYXQiOjE3MTg0NTY4MDAsImV4cCI6MTcxODU0MzIwMH0.sample-signature\",\n  \"type\": \"Bearer\",\n  \"email\": \"vishal@example.com\",\n  \"name\": \"Vishal Kumar\"\n}"
+            },
+            {
+              "name": "401 - Invalid Credentials",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/login",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "auth", "login"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"vishal@example.com\",\n  \"password\": \"wrongpassword\"\n}"
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"Invalid email or password\",\n  \"status\": 401\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "description": "User profile management endpoints. All requests require JWT authentication.",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/user/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "user", "profile"]
+            },
+            "description": "Retrieve the authenticated user's profile information.\n\n**Authentication:** Requires a valid JWT token in the Authorization header."
+          },
+          "response": [
+            {
+              "name": "200 - Profile Retrieved",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/user/profile",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "user", "profile"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"name\": \"Vishal Kumar\",\n  \"email\": \"vishal@example.com\",\n  \"institution\": \"IIT Delhi\",\n  \"phone\": \"+91-9876543210\",\n  \"createdAt\": \"2026-01-15T10:30:00\"\n}"
+            },
+            {
+              "name": "401 - Unauthorized",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/user/profile",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "user", "profile"]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"Unauthorized\",\n  \"message\": \"JWT token is missing or invalid\",\n  \"status\": 401\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/user/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "user", "profile"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Vishal Kumar\",\n  \"institution\": \"IIT Delhi\",\n  \"phone\": \"+91-9876543210\"\n}"
+            },
+            "description": "Update the authenticated user's profile fields. Only provided fields are updated.\n\n**Authentication:** Requires a valid JWT token in the Authorization header.\n\n**Note:** The `email` and `password` fields cannot be updated through this endpoint."
+          },
+          "response": [
+            {
+              "name": "200 - Profile Updated",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/user/profile",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "user", "profile"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Vishal Kumar\",\n  \"institution\": \"IIT Delhi\",\n  \"phone\": \"+91-9876543210\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"name\": \"Vishal Kumar\",\n  \"email\": \"vishal@example.com\",\n  \"institution\": \"IIT Delhi\",\n  \"phone\": \"+91-9876543210\",\n  \"updatedAt\": \"2026-06-15T12:00:00\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Progress",
+      "description": "DSA progress tracking endpoints. Manage problem-solving records with full CRUD operations. All requests require JWT authentication.",
+      "item": [
+        {
+          "name": "Add Progress",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/progress",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "progress"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"topic\": \"Arrays\",\n  \"problemName\": \"Two Sum\",\n  \"difficulty\": \"EASY\",\n  \"status\": \"SOLVED\",\n  \"platform\": \"LeetCode\",\n  \"notes\": \"Used HashMap for O(n) solution\",\n  \"solvedDate\": \"2026-06-15\"\n}"
+            },
+            "description": "Add a new DSA progress entry for the authenticated user.\n\n**Fields:**\n- `topic`: DSA topic (e.g., Arrays, Trees, DP, Graphs)\n- `problemName`: Name of the problem\n- `difficulty`: EASY | MEDIUM | HARD\n- `status`: SOLVED | ATTEMPTED | REVISIT\n- `platform`: LeetCode | HackerRank | CodeForces | Other\n- `notes`: Optional notes about the approach\n- `solvedDate`: Date in YYYY-MM-DD format"
+          },
+          "response": [
+            {
+              "name": "201 - Progress Added",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/progress",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "progress"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"topic\": \"Arrays\",\n  \"problemName\": \"Two Sum\",\n  \"difficulty\": \"EASY\",\n  \"status\": \"SOLVED\",\n  \"platform\": \"LeetCode\",\n  \"notes\": \"Used HashMap for O(n) solution\",\n  \"solvedDate\": \"2026-06-15\"\n}"
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"topic\": \"Arrays\",\n  \"problemName\": \"Two Sum\",\n  \"difficulty\": \"EASY\",\n  \"status\": \"SOLVED\",\n  \"platform\": \"LeetCode\",\n  \"notes\": \"Used HashMap for O(n) solution\",\n  \"solvedDate\": \"2026-06-15\",\n  \"createdAt\": \"2026-06-15T14:30:00\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get All Progress",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/progress",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "progress"]
+            },
+            "description": "Retrieve all DSA progress entries for the authenticated user, ordered by solved date (most recent first)."
+          },
+          "response": [
+            {
+              "name": "200 - All Progress Entries",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/progress",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "progress"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "[\n  {\n    \"id\": 1,\n    \"topic\": \"Arrays\",\n    \"problemName\": \"Two Sum\",\n    \"difficulty\": \"EASY\",\n    \"status\": \"SOLVED\",\n    \"platform\": \"LeetCode\",\n    \"notes\": \"Used HashMap for O(n) solution\",\n    \"solvedDate\": \"2026-06-15\",\n    \"createdAt\": \"2026-06-15T14:30:00\"\n  },\n  {\n    \"id\": 2,\n    \"topic\": \"Trees\",\n    \"problemName\": \"Binary Tree Inorder Traversal\",\n    \"difficulty\": \"MEDIUM\",\n    \"status\": \"SOLVED\",\n    \"platform\": \"LeetCode\",\n    \"notes\": \"Recursive and iterative approaches\",\n    \"solvedDate\": \"2026-06-14\",\n    \"createdAt\": \"2026-06-14T09:15:00\"\n  },\n  {\n    \"id\": 3,\n    \"topic\": \"Dynamic Programming\",\n    \"problemName\": \"Longest Common Subsequence\",\n    \"difficulty\": \"MEDIUM\",\n    \"status\": \"ATTEMPTED\",\n    \"platform\": \"HackerRank\",\n    \"notes\": \"Need to revisit the bottom-up approach\",\n    \"solvedDate\": \"2026-06-13\",\n    \"createdAt\": \"2026-06-13T18:45:00\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get Dashboard Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/progress/summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "progress", "summary"]
+            },
+            "description": "Get an aggregated summary of the user's DSA progress for the dashboard. Includes total counts, topic-wise breakdown, difficulty distribution, platform distribution, and streak information."
+          },
+          "response": [
+            {
+              "name": "200 - Dashboard Summary",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/progress/summary",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "progress", "summary"]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"totalSolved\": 42,\n  \"totalAttempted\": 5,\n  \"totalRevisit\": 3,\n  \"topicWise\": {\n    \"Arrays\": 12,\n    \"Trees\": 8,\n    \"Dynamic Programming\": 6,\n    \"Graphs\": 5,\n    \"Strings\": 4,\n    \"Linked Lists\": 4,\n    \"Stacks & Queues\": 3\n  },\n  \"difficultyWise\": {\n    \"EASY\": 18,\n    \"MEDIUM\": 20,\n    \"HARD\": 4\n  },\n  \"platformWise\": {\n    \"LeetCode\": 35,\n    \"HackerRank\": 5,\n    \"CodeForces\": 2\n  },\n  \"currentStreak\": 7,\n  \"longestStreak\": 15,\n  \"lastSolvedDate\": \"2026-06-15\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Progress",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/progress/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "progress", "1"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"topic\": \"Arrays\",\n  \"problemName\": \"Two Sum\",\n  \"difficulty\": \"EASY\",\n  \"status\": \"SOLVED\",\n  \"platform\": \"LeetCode\",\n  \"notes\": \"Optimized with HashMap - O(n) time, O(n) space\",\n  \"solvedDate\": \"2026-06-15\"\n}"
+            },
+            "description": "Update an existing DSA progress entry by its ID. Only the owner of the entry can update it.\n\n**Path Parameter:**\n- `id`: The progress entry ID to update (replace `1` with the actual ID)"
+          },
+          "response": [
+            {
+              "name": "200 - Progress Updated",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/progress/1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "progress", "1"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"topic\": \"Arrays\",\n  \"problemName\": \"Two Sum\",\n  \"difficulty\": \"EASY\",\n  \"status\": \"SOLVED\",\n  \"platform\": \"LeetCode\",\n  \"notes\": \"Optimized with HashMap - O(n) time, O(n) space\",\n  \"solvedDate\": \"2026-06-15\"\n}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 1,\n  \"topic\": \"Arrays\",\n  \"problemName\": \"Two Sum\",\n  \"difficulty\": \"EASY\",\n  \"status\": \"SOLVED\",\n  \"platform\": \"LeetCode\",\n  \"notes\": \"Optimized with HashMap - O(n) time, O(n) space\",\n  \"solvedDate\": \"2026-06-15\",\n  \"updatedAt\": \"2026-06-15T16:00:00\"\n}"
+            },
+            {
+              "name": "404 - Progress Not Found",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/progress/999",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "progress", "999"]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"topic\": \"Arrays\",\n  \"problemName\": \"Two Sum\",\n  \"difficulty\": \"EASY\",\n  \"status\": \"SOLVED\",\n  \"platform\": \"LeetCode\",\n  \"notes\": \"Test\",\n  \"solvedDate\": \"2026-06-15\"\n}"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"Progress entry not found\",\n  \"status\": 404\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Progress",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/progress/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "progress", "1"]
+            },
+            "description": "Delete a DSA progress entry by its ID. Only the owner of the entry can delete it.\n\n**Path Parameter:**\n- `id`: The progress entry ID to delete (replace `1` with the actual ID)\n\n**Response:** `204 No Content` on success (empty body)"
+          },
+          "response": [
+            {
+              "name": "204 - Progress Deleted",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/progress/1",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "progress", "1"]
+                }
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [],
+              "body": ""
+            },
+            {
+              "name": "404 - Progress Not Found",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{authToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/progress/999",
+                  "host": ["{{baseUrl}}"],
+                  "path": ["api", "progress", "999"]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"error\": \"Progress entry not found\",\n  \"status\": 404\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

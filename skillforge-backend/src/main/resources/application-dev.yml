@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:skillforgedb
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+app:
+  jwt:
+    secret: dev-secret-key-that-is-at-least-32-bytes-long-for-hs256
+    expiration: 86400000
+  cors:
+    origins: http://localhost:5173

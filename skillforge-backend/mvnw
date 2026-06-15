@@ -1,0 +1,58 @@
+#!/bin/sh
+# Maven Wrapper script for Unix/macOS/Linux
+# Downloads and runs the specified Maven version
+
+set -e
+
+# Determine the project base directory
+if [ -z "$MAVEN_PROJECTBASEDIR" ]; then
+  MAVEN_PROJECTBASEDIR="$(cd "$(dirname "$0")" && pwd)"
+  export MAVEN_PROJECTBASEDIR
+fi
+
+WRAPPER_PROPERTIES="$MAVEN_PROJECTBASEDIR/.mvn/wrapper/maven-wrapper.properties"
+WRAPPER_JAR="$MAVEN_PROJECTBASEDIR/.mvn/wrapper/maven-wrapper.jar"
+MAVEN_HOME="$HOME/.m2/wrapper"
+
+# Read the distribution URL from maven-wrapper.properties
+if [ -f "$WRAPPER_PROPERTIES" ]; then
+  DIST_URL=$(grep 'distributionUrl' "$WRAPPER_PROPERTIES" | cut -d'=' -f2- | tr -d '\r')
+else
+  echo "Error: Cannot find $WRAPPER_PROPERTIES"
+  exit 1
+fi
+
+# Extract Maven version from distribution URL
+DIST_NAME=$(basename "$DIST_URL" .zip)
+MAVEN_DIR="$MAVEN_HOME/$DIST_NAME"
+
+# Download and extract Maven if not already present
+if [ ! -d "$MAVEN_DIR" ]; then
+  echo "Downloading Maven from $DIST_URL..."
+  mkdir -p "$MAVEN_HOME"
+  TEMP_FILE="$MAVEN_HOME/maven-dist.zip"
+
+  if command -v curl > /dev/null 2>&1; then
+    curl -fsSL -o "$TEMP_FILE" "$DIST_URL"
+  elif command -v wget > /dev/null 2>&1; then
+    wget -q -O "$TEMP_FILE" "$DIST_URL"
+  else
+    echo "Error: Neither curl nor wget found. Please install one of them."
+    exit 1
+  fi
+
+  echo "Extracting Maven..."
+  unzip -q "$TEMP_FILE" -d "$MAVEN_HOME"
+  rm -f "$TEMP_FILE"
+  echo "Maven installed to $MAVEN_DIR"
+fi
+
+# Set up JAVA_HOME if not set
+if [ -z "$JAVA_HOME" ]; then
+  JAVACMD="java"
+else
+  JAVACMD="$JAVA_HOME/bin/java"
+fi
+
+# Run Maven
+exec "$MAVEN_DIR/bin/mvn" "$@"
