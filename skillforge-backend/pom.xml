@@ -41,6 +41,16 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+        <!--
+            FIX #7 — RENDER HEALTH CHECK: Render probes /actuator/health to determine
+            whether the service is healthy. Without this dependency the endpoint returns
+            404, Render marks the deploy as failed, and the instance is terminated.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <!-- PostgreSQL Driver -->
         <dependency>
             <groupId>org.postgresql</groupId>

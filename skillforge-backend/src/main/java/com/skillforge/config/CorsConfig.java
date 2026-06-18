@@ -16,6 +16,10 @@ import java.util.List;
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
+    // FIX #3 — CORS ISSUE: CORS_ORIGINS may contain spaces after commas
+    // ("http://a, http://b"). Split on ",\\s*" not just "," to strip them.
+    // Also: in production you can pass a comma-separated list from Render's
+    // env var panel and it will be split correctly.
     @Value("${app.cors.origins}")
     private String corsOrigins;
 
@@ -25,9 +29,10 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins(corsOrigins.split(","))
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("Authorization", "Content-Type")
+                .allowedOriginPatterns(getAllowedOrigins())  // FIX: use allowedOriginPatterns so
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Vercel preview *.vercel.app works
+                .allowedHeaders("Authorization", "Content-Type", "Accept")
+                .exposedHeaders("Authorization")
                 .allowCredentials(true)
                 .maxAge(3600);
     }
@@ -36,18 +41,34 @@ public class CorsConfig implements WebMvcConfigurer {
      * Spring Security-level CORS configuration source.
      * This is critical for production: without it, Spring Security blocks
      * preflight OPTIONS requests before they reach the MVC CORS handler.
+     *
+     * FIX #4 — SECURITY CORS BUG: The original used setAllowedOrigins() which
+     * does NOT support patterns. Switched to setAllowedOriginPatterns() so that
+     * wildcard entries like https://*.vercel.app work correctly.
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(corsOrigins.split(",")));
+        // allowedOriginPatterns supports both exact origins and glob patterns
+        configuration.setAllowedOriginPatterns(Arrays.asList(getAllowedOrigins()));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
+        configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/api/**", configuration);
         return source;
+    }
+
+    /**
+     * Parses the CORS_ORIGINS env variable (comma-separated, trims whitespace).
+     */
+    private String[] getAllowedOrigins() {
+        return Arrays.stream(corsOrigins.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toArray(String[]::new);
     }
 }

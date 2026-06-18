@@ -1,20 +1,16 @@
-spring:
+﻿spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
 
 ---
-# ════════════════════════════════════════════════════════════════
-# DEFAULT / PRODUCTION Profile
-# Activated on Render (where env vars are set)
-# ════════════════════════════════════════════════════════════════
 spring:
   config:
     activate:
       on-profile: "!dev"
   datasource:
-    url: ${DATABASE_URL}
-    username: ${DATABASE_USERNAME}
-    password: ${DATABASE_PASSWORD}
+    url: jdbc:postgresql://neondb_owner:npg_VaXl5OHY9pMv@ep-fancy-sound-ah7g92yx-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+    username: neondb_owner
+    password: npg_VaXl5OHY9pMv
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 5
@@ -33,10 +29,6 @@ spring:
         format_sql: true
 
 ---
-# ════════════════════════════════════════════════════════════════
-# DEV Profile (default for local development)
-# Uses H2 in-memory database — no external dependencies needed
-# ════════════════════════════════════════════════════════════════
 spring:
   config:
     activate:
@@ -48,25 +40,21 @@ spring:
     driver-class-name: org.h2.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     open-in-view: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
   h2:
     console:
-      enabled: true
-      path: /h2-console
+      enabled: false
 
 ---
-# ════════════════════════════════════════════════════════════════
-# Shared Configuration (all profiles)
-# ════════════════════════════════════════════════════════════════
 app:
   jwt:
-    secret: ${JWT_SECRET:skillforge-dev-secret-key-minimum-32-bytes-for-hs256-signing}
+    secret: ${JWT_SECRET:skillforge-dev-secret-key-min-32-bytes-for-hs256-algorithm-signing-ok}
     expiration: ${JWT_EXPIRATION:86400000}
   cors:
     origins: ${CORS_ORIGINS:http://localhost:5173}

@@ -4,6 +4,7 @@ import com.skillforge.security.JwtAuthenticationEntryPoint;
 import com.skillforge.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -51,8 +52,15 @@ public class SecurityConfig {
                         exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 // Configure URL authorization rules
                 .authorizeHttpRequests(authorize -> authorize
+                        // FIX #5 — CORS PREFLIGHT BUG: Spring Security intercepts OPTIONS
+                        // requests before the CORS filter runs. Without this, browsers get
+                        // a 403 on preflight and ALL cross-origin API calls fail.
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
+                        // FIX #6 — ACTUATOR / HEALTH CHECK: Render uses /actuator/health
+                        // for its health check. Permit it so the service is marked healthy.
+                        .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll())
                 // Add the JWT filter before the default authentication filter
