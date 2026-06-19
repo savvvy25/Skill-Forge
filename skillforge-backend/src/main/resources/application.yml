@@ -8,16 +8,10 @@ spring:
     activate:
       on-profile: "!dev"
   datasource:
-    url: jdbc:postgresql://neondb_owner:npg_VaXl5OHY9pMv@ep-fancy-sound-ah7g92yx-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
-    username: neondb_owner
-    password: npg_VaXl5OHY9pMv
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
-    hikari:
-      maximum-pool-size: 5
-      minimum-idle: 2
-      connection-timeout: 20000
-      idle-timeout: 300000
-      max-lifetime: 1200000
   jpa:
     hibernate:
       ddl-auto: update
@@ -26,7 +20,6 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
 
 ---
 spring:
@@ -40,16 +33,16 @@ spring:
     driver-class-name: org.h2.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
     open-in-view: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
   h2:
     console:
-      enabled: false
+      enabled: true
+      path: /h2-console
 
 ---
 app:
